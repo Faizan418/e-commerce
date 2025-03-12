@@ -28,20 +28,40 @@ document.addEventListener("DOMContentLoaded", function () {
             const password = document.getElementById("password").value;
 
             if (!email || !password) {
-                alert("⚠️ Please enter a valid email and password.");
+                // alert("⚠️ Please enter a valid email and password.");
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Please enter a valid email and password.",
+                  });
                 return;
             }
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    alert("✅ Sign up successful! Redirecting to login...");
+                    // alert("✅ Sign up successful! Redirecting to login...");
+                    Swal.fire({
+                        title: "Sign up successful! Redirecting to login...",
+                        icon: "success",
+                        draggable: true
+                      });
                     window.location.href = "login.html";
                 })
                 .catch((error) => {
                     if (error.code === "auth/email-already-in-use") {
-                        alert("⚠️ This email is already in use. Try logging in.");
+                        // alert("⚠️ This email is already in use. Try logging in.");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "This email is already in use. Try logging in.",
+                          });
                     } else {
-                        alert(`⚠️ Error: ${error.message}`);
+                        // alert(`⚠️ Error: ${error.message}`);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: `⚠️ Error: ${error.message}`,
+                          });
                     }
                 });
         });
@@ -57,22 +77,47 @@ document.addEventListener("DOMContentLoaded", function () {
             const password = document.getElementById("login-password").value;
 
             if (!email || !password) {
-                alert("⚠️ Please enter a valid email and password.");
+                // alert("⚠️ Please enter a valid email and password.");
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Please enter a valid email and password.",
+                  });
                 return;
             }
 
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    alert("✅ Login successful! Redirecting to home...");
+                    // alert("✅ Login successful! Redirecting to home...");
+                    Swal.fire({
+                        title: "Login successful! Redirecting to home...",
+                        icon: "success",
+                        draggable: true
+                      });
                     window.location.href = "home.html";
                 })
                 .catch((error) => {
                     if (error.code === "auth/user-not-found") {
-                        alert("⚠️ No account found with this email. Please sign up.");
+                        // alert("⚠️ No account found with this email. Please sign up.");
+                        Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "No account found with this email. Please sign up.",
+                  });
                     } else if (error.code === "auth/wrong-password") {
-                        alert("⚠️ Incorrect password. Try again.");
+                        // alert("⚠️ Incorrect password. Try again.");
+                        Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Incorrect password. Try again.",
+                  });
                     } else {
-                        alert(`⚠️ Error: ${error.message}`);
+                        // alert(`⚠️ Error: ${error.message}`);
+                        Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: `⚠️ Error: ${error.message}`,
+                  });
                     }
                 });
         });
@@ -83,11 +128,21 @@ document.addEventListener("DOMContentLoaded", function () {
 function logout() {
     signOut(auth)
         .then(() => {
-            alert("✅ Logged out successfully!");
+            // alert("✅ Logged out successfully!");
+            Swal.fire({
+                title: "Logged out successfully!",
+                icon: "success",
+                draggable: true
+              });
             window.location.href = "index.html";
         })
         .catch((error) => {
-            alert(`⚠️ Error: ${error.message}`);
+            // alert(`⚠️ Error: ${error.message}`);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: `⚠️ Error: ${error.message}`,
+              });
         });
 }
 
