@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Amazon</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+    <div class="checkout-container">
+        <h1>Checkout</h1>
+        <div class="checkout-grid">
+            <div class="checkout-left">
+                <div class="section shipping-form">
+                    <h2>Shipping Information</h2>
+                    <label for="full-name">Full Name:</label>
+                    <input type="text" id="full-name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" required>
+                    <label for="address-line1">Address Line 1:</label>
+                    <input type="text" id="address-line1" required>
+                    <label for="address-line2">Address Line 2 (Optional):</label>
+                    <input type="text" id="address-line2">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" required>
+                    <label for="state">State/Province:</label>
+                    <input type="text" id="state" required>
+                    <label for="zip">ZIP/Postal Code:</label>
+                    <input type="text" id="zip" required>
+                    <label for="country">Country:</label>
+                    <input type="text" id="country" required>
+                </div>
+                <div class="section shipping-method">
+                    <h2>Shipping Method</h2>
+                    <label><input type="radio" name="shipping" value="standard" checked> Standard Shipping ($5.00)</label>
+                    <label><input type="radio" name="shipping" value="express"> Express Shipping ($15.00)</label>
+                </div>
+                <div class="section payment-method">
+                    <h2>Payment Method</h2>
+                    <label><input type="radio" name="payment" value="cod" checked> Cash on Delivery</label>
+                    <label><input type="radio" name="payment" value="card"> Credit/Debit Card</label>
+                    <div id="card-details" style="display: none;">
+                        <label for="card-number">Card Number:</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456">
+                        <label for="card-expiry">Expiry Date:</label>
+                        <input type="text" id="card-expiry" placeholder="MM/YY">
+                        <label for="card-cvv">CVV:</label>
+                        <input type="text" id="card-cvv" placeholder="123">
+                    </div>
+                </div>
+                <div class="section promo-code">
+                    <h2>Promo Code</h2>
+                    <input type="text" id="promo-code" placeholder="Enter promo code">
+                    <button onclick="applyPromo()">Apply</button>
+                </div>
+            </div>
+            <div class="checkout-right">
+                <div class="section order-summary">
+                    <h2>Order Summary</h2>
+                    <div id="checkout-items"></div>
+                    <p id="checkout-empty" style="display: none;">Your cart is empty.</p>
+                    <div class="summary-details">
+                        <p>Subtotal: <span id="subtotal">$0.00</span></p>
+                        <p>Shipping: <span id="shipping-cost">$5.00</span></p>
+                        <p>Discount: <span id="discount">$0.00</span></p>
+                        <p><strong>Total:</strong> <span id="total-price">$0.00</span></p>
+                    </div>
+                </div>
+                <div class="checkout-actions">
+                    <a href="cart.html" class="back-btn">Back to Cart</a>
+                    <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="checkout.js"></script>
+</body>
+</html>

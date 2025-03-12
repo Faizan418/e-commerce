@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Amazon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha521-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="product.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="nav-logo border">
+                <div class="logo"></div>
+            </div>
+            <div class="nav-address border">
+                <p class="add-first">Deliver</p>
+                <div class="addres-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <p class="add-second">Pakistan</p>
+                </div>
+            </div>
+            <div class="nav-search">
+                <select class="search-select">
+                    <option>All</option>
+                </select>
+                <input placeholder="Search Amazon" class="search-inp">
+                <div class="search-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+            </div>
+            <div class="nav-cart border" onclick="window.location.href='cart.html'">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Cart
+            </div>
+            <div class="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-all">
+                <i class="fa-solid fa-bars"></i>
+                All
+            </div>
+            <div class="panel-ops">
+                <p>Today's Deals</p>
+                <p>Customer Service</p>
+                <p>Registry</p>
+                <p>Gift Cards</p>
+                <p>Sell</p>
+            </div>
+            <div class="panel-deals">
+                Shop deals in Electronics
+            </div>
+        </div>
+    </header>
+    <div class="product-container">
+        <div class="product-image">
+            <img id="product-img" src="" alt="Product Image">
+        </div>
+        <div class="product-details">
+            <h1 id="product-title"></h1>
+            <p id="product-price"></p>
+            <p id="product-description"></p>
+            <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button>
+            <p id="cart-message"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+     
+const urlParams = new URLSearchParams(window.location.search);
+const productId = parseInt(urlParams.get('id'));
+const product = products.find(p => p.id === productId);
+
+if (product) {
+    document.getElementById("product-img").src = product.image;
+    document.getElementById("product-title").innerText = product.title;
+    document.getElementById("product-price").innerText = product.price;
+    document.getElementById("product-description").innerText = product.description;
+} else {
+    document.querySelector(".product-container").innerText = "Product not found!";
+}
+    </script>
+</body>
+</html>
