@@ -2,17 +2,16 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Firebase Configuration from .env
+// Firebase Configuration
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    apiKey: "AIzaSyDauai1XnTfuEUvKzcTn1Pe0uN2e0fsJ1I",
+    authDomain: "prepration-hackathon.firebaseapp.com",
+    projectId: "prepration-hackathon",
+    storageBucket: "prepration-hackathon.firebasestorage.app",
+    messagingSenderId: "465148634017",
+    appId: "1:465148634017:web:8ab0f99183479b948161e0",
+    measurementId: "G-M7ZNEPQPZ1"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -39,7 +38,7 @@ if (signUpForm) {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                return updateProfile(user, { displayName: name });
+                return updateProfile(user, { displayName: name }); // Save name
             })
             .then(() => {
                 Swal.fire({
@@ -128,4 +127,4 @@ export function logout() {
         });
 }
 
-window.logout = logout;
+window.logout = logout; // Global access
