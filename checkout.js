@@ -1,3 +1,7 @@
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db = getFirestore();
+
 let discount = 0;
 
 function displayCheckout() {
@@ -75,7 +79,7 @@ function applyPromo() {
     displayCheckout();
 }
 
-function placeOrder() {
+async function placeOrder() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const fullName = document.getElementById("full-name").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -132,19 +136,32 @@ function placeOrder() {
         shipping: { fullName, email, phone, addressLine1, addressLine2, city, state, zip, country },
         shippingMethod: shippingMethod,
         paymentMethod: paymentMethod,
-        total: document.getElementById("total-price").innerText
+        total: document.getElementById("total-price").innerText,
+        status: "Pending",
+        createdAt: new Date().toISOString()
     };
-    localStorage.setItem("lastOrder", JSON.stringify(orderDetails));
-    Swal.fire({
-        icon: "success",
-        title: "Order Placed!",
-        text: "Thank you for your purchase. Redirecting to home...",
-        timer: 2500,
-        showConfirmButton: false
-    }).then(() => {
-        localStorage.removeItem("cart");
-        window.location.href = "home.html";
-    });
+
+    try {
+        await addDoc(collection(db, "orders"), orderDetails);
+        Swal.fire({
+            icon: "success",
+            title: "Order Placed!",
+            text: "Thank you for your purchase. Redirecting to home...",
+            timer: 2500,
+            showConfirmButton: false
+        }).then(() => {
+            localStorage.removeItem("cart");
+            window.location.href = "home.html";
+        });
+    } catch (error) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to place order: " + error.message,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
 }
 
 document.querySelectorAll('input[name="payment"]').forEach(input => {

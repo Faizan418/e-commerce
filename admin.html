@@ -3,42 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="auth.css">
+    <title>Admin Dashboard - Amazon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha521-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="admin.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome, Admin! You can manage the site here.</p>
-        <button class="btn" onclick="logout()">Logout</button>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Admin Panel</h2>
+        </div>
+        <ul class="nav-links">
+            <li class="active" onclick="showSection('dashboard-section')"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+            <li onclick="showSection('products-section')"><i class="fas fa-box"></i> Products</li>
+            <li onclick="showSection('orders-section')"><i class="fas fa-shopping-cart"></i> Orders</li>
+            <li onclick="showSection('users-section')"><i class="fas fa-users"></i> Users</li>
+            <li onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
     </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search..." id="search-bar">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="admin-profile">
+                    <span>Welcome, Admin</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section active">
+            <h2>Dashboard Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Products</h3>
+                    <p id="total-products">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p id="total-orders">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p id="total-users">0</p>
+                </div>
+            </div>
+            <div class="analytics-section">
+                <h3>Sales Trends (Last 30 Days)</h3>
+                <canvas id="sales-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products-section" class="content-section">
+            <h2>Manage Products</h2>
+            <div class="add-product-form">
+                <h3>Add New Product</h3>
+                <form id="add-product-form">
+                    <div class="form-group">
+                        <label for="product-title">Title</label>
+                        <input type="text" id="product-title" placeholder="Enter product title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Price</label>
+                        <input type="text" id="product-price" placeholder="Enter price (e.g., $29.99)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-image">Image URL</label>
+                        <input type="text" id="product-image" placeholder="Enter image URL" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-description">Description</label>
+                        <textarea id="product-description" placeholder="Enter description" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </form>
+            </div>
+            <div class="products-list">
+                <h3>Products List</h3>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders-section" class="content-section">
+            <h2>Manage Orders</h2>
+            <table id="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table-body"></tbody>
+            </table>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users-section" class="content-section">
+            <h2>Manage Users</h2>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body"></tbody>
+            </table>
+        </section>
+    </div>
+
     <script type="module" src="auth.js"></script>
-    <script type="module">
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const auth = getAuth();
-        const db = getFirestore();
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userDocRef = doc(db, "users", user.uid);
-                getDoc(userDocRef).then((docSnap) => {
-                    if (!docSnap.exists() || docSnap.data().role !== "admin") {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Access Denied",
-                            text: "Only admins can view this page.",
-                        }).then(() => {
-                            window.location.href = "index.html";
-                        });
-                    }
-                });
-            } else {
-                window.location.href = "index.html";
-            }
-        });
-    </script>
+    <script type="module" src="admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
