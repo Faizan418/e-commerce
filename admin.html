@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, Admin! You can manage the site here.</p>
+        <button class="btn" onclick="logout()">Logout</button>
+    </div>
+    <script type="module" src="auth.js"></script>
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const auth = getAuth();
+        const db = getFirestore();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                getDoc(userDocRef).then((docSnap) => {
+                    if (!docSnap.exists() || docSnap.data().role !== "admin") {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Access Denied",
+                            text: "Only admins can view this page.",
+                        }).then(() => {
+                            window.location.href = "index.html";
+                        });
+                    }
+                });
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>

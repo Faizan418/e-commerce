@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha521-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="product.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header>
@@ -15,7 +16,7 @@
                 <div class="logo"></div>
             </div>
             <div class="nav-address border">
-                <p class="add-first">Deliver</p>
+                <p class="add-first">Deliver to</p>
                 <div class="addres-icon">
                     <i class="fa-solid fa-location-dot"></i>
                     <p class="add-second">Pakistan</p>
@@ -24,6 +25,9 @@
             <div class="nav-search">
                 <select class="search-select">
                     <option>All</option>
+                    <option>Cloths</option>
+                    <option>Electronics</option>
+                    <option>Books</option>
                 </select>
                 <input placeholder="Search Amazon" class="search-inp">
                 <div class="search-icon">
@@ -33,6 +37,10 @@
             <div class="nav-cart border" onclick="window.location.href='cart.html'">
                 <i class="fa-solid fa-cart-shopping"></i>
                 Cart
+            </div>
+            <div class="nav-logout border" id="logout-btn" onclick="logout()" style="display: none;">
+                <i class="fa-solid fa-sign-out-alt"></i>
+                Logout
             </div>
             <div class="hamburger">
                 <i class="fa-solid fa-bars"></i>
@@ -55,33 +63,108 @@
             </div>
         </div>
     </header>
+
     <div class="product-container">
-        <div class="product-image">
-            <img id="product-img" src="" alt="Product Image">
+        <div class="product-gallery">
+            <div class="main-image">
+                <img id="product-img" src="" alt="Product Image">
+            </div>
         </div>
         <div class="product-details">
-            <h1 id="product-title"></h1>
-            <p id="product-price"></p>
-            <p id="product-description"></p>
-            <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button>
-            <p id="cart-message"></p>
+            <h1 id="product-title" class="product-title"></h1>
+            <div class="product-rating">
+                <span class="stars">★★★★☆</span>
+                <span class="rating-text">4.2 out of 5 (1,234 reviews)</span>
+            </div>
+            <p id="product-price" class="product-price"></p>
+            <p id="product-description" class="product-description"></p>
+            <div class="buy-section">
+                <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button>
+                <button class="buy-now-btn" onclick="buyNow()">Buy Now</button>
+            </div>
+            <p id="cart-message" class="cart-message"></p>
+            <div class="product-info">
+                <p><strong>Availability:</strong> In Stock</p>
+                <p><strong>Shipping:</strong> Free delivery tomorrow</p>
+                <p><strong>Condition:</strong> New</p>
+                <p><strong>Return Policy:</strong> 30-day return guarantee</p>
+            </div>
         </div>
     </div>
-    <script src="script.js"></script>
-    <script>
-     
-const urlParams = new URLSearchParams(window.location.search);
-const productId = parseInt(urlParams.get('id'));
-const product = products.find(p => p.id === productId);
 
-if (product) {
-    document.getElementById("product-img").src = product.image;
-    document.getElementById("product-title").innerText = product.title;
-    document.getElementById("product-price").innerText = product.price;
-    document.getElementById("product-description").innerText = product.description;
-} else {
-    document.querySelector(".product-container").innerText = "Product not found!";
-}
+    <div class="reviews-section">
+        <h2>Customer Reviews</h2>
+        <div class="review">
+            <div class="review-header">
+                <span class="reviewer-name">John Doe</span>
+                <span class="review-stars">★★★★★</span>
+            </div>
+            <p class="review-text">Really loved the quality of this product! Highly recommend it.</p>
+        </div>
+        <div class="review">
+            <div class="review-header">
+                <span class="reviewer-name">Jane Smith</span>
+                <span class="review-stars">★★★☆☆</span>
+            </div>
+            <p class="review-text">It's okay, but the delivery was a bit late.</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="foot-panel1"><a href="#">Back to Top</a></div>
+    </footer>
+
+    <script src="script.js"></script> <!-- Ensure this loads first -->
+    <script type="module" src="auth.js"></script>
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const auth = getAuth();
+        const logoutBtn = document.getElementById("logout-btn");
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                logoutBtn.style.display = "flex";
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Access Denied",
+                    text: "Please log in to view this page!",
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = "index.html";
+                });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id'));
+            console.log("Product ID:", productId);
+            console.log("Products Array:", window.products);
+
+            if (window.products && productId) {
+                const product = window.products.find(p => p.id === productId);
+                if (product) {
+                    const imgElement = document.getElementById("product-img");
+                    const defaultImage = "https://via.placeholder.com/300x300?text=Product+" + productId; // Corrected URL
+                    imgElement.src = product.image || defaultImage;
+                    imgElement.onerror = () => {
+                        console.error("Image failed to load for product ID:", productId);
+                        imgElement.src = defaultImage; // Fallback to corrected placeholder
+                    };
+                    document.getElementById("product-title").innerText = product.title;
+                    document.getElementById("product-price").innerText = product.price;
+                    document.getElementById("product-description").innerText = product.description;
+                } else {
+                    document.querySelector(".product-container").innerHTML = "<h2>Product not found!</h2>";
+                }
+            } else {
+                console.error("Products array not loaded or invalid product ID");
+                document.querySelector(".product-container").innerHTML = "<h2>Error loading product data!</h2>";
+            }
+        });
     </script>
 </body>
 </html>

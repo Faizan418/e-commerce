@@ -6,6 +6,7 @@
     <title>Amazon.com</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha521-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="home.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header>
@@ -32,6 +33,10 @@
             <div class="nav-cart border" onclick="window.location.href='cart.html'">
                 <i class="fa-solid fa-cart-shopping"></i>
                 Cart
+            </div>
+            <div class="nav-logout border" id="logout-btn" onclick="logout()" style="display: none;">
+                <i class="fa-solid fa-sign-out-alt"></i>
+                Logout
             </div>
             <div class="hamburger">
                 <i class="fa-solid fa-bars"></i>
@@ -220,6 +225,31 @@
             </div>
         </div>
     </footer>
+    <script type="module" src="auth.js"></script>
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const auth = getAuth();
+        const logoutBtn = document.getElementById("logout-btn");
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User logged in—show logout button
+                logoutBtn.style.display = "flex";
+            } else {
+                // User not logged in—alert and redirect
+                Swal.fire({
+                    icon: "error",
+                    title: "Access Denied",
+                    text: "Please log in to access this page!",
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = "index.html";
+                });
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

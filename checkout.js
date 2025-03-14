@@ -1,116 +1,160 @@
+let discount = 0;
 
-        let discount = 0;
+function displayCheckout() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const checkoutItemsDiv = document.getElementById("checkout-items");
+    const checkoutEmptyMsg = document.getElementById("checkout-empty");
+    const itemCountSpan = document.getElementById("item-count");
+    const subtotalSpan = document.getElementById("subtotal");
+    const shippingCostSpan = document.getElementById("shipping-cost");
+    const discountSpan = document.getElementById("discount");
+    const totalPriceSpan = document.getElementById("total-price");
 
-        function displayCheckout() {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const checkoutItemsDiv = document.getElementById("checkout-items");
-            const checkoutEmptyMsg = document.getElementById("checkout-empty");
-            const subtotalSpan = document.getElementById("subtotal");
-            const shippingCostSpan = document.getElementById("shipping-cost");
-            const discountSpan = document.getElementById("discount");
-            const totalPriceSpan = document.getElementById("total-price");
+    if (cart.length === 0) {
+        checkoutEmptyMsg.style.display = "block";
+        checkoutItemsDiv.innerHTML = "";
+        itemCountSpan.textContent = "0";
+        subtotalSpan.textContent = "$0.00";
+        shippingCostSpan.textContent = "$0.00";
+        discountSpan.textContent = "$0.00";
+        totalPriceSpan.textContent = "$0.00";
+    } else {
+        checkoutEmptyMsg.style.display = "none";
+        checkoutItemsDiv.innerHTML = "";
+        let subtotal = 0;
+        cart.forEach(item => {
+            const itemPrice = parseFloat(item.price.replace("$", ""));
+            const itemQuantity = item.quantity || 1;
+            const itemTotal = itemPrice * itemQuantity;
+            subtotal += itemTotal;
 
-            if (cart.length === 0) {
-                checkoutEmptyMsg.style.display = "block";
-                checkoutItemsDiv.innerHTML = "";
-                subtotalSpan.innerText = "$0.00";
-                shippingCostSpan.innerText = "$0.00";
-                discountSpan.innerText = "$0.00";
-                totalPriceSpan.innerText = "$0.00";
-            } else {
-                checkoutEmptyMsg.style.display = "none";
-                checkoutItemsDiv.innerHTML = "";
-                let subtotal = 0;
-                cart.forEach(item => {
-                    const itemDiv = document.createElement("div");
-                    itemDiv.classList.add("checkout-item");
-                    const itemPrice = parseFloat(item.price.replace("$", ""));
-                    const itemQuantity = item.quantity || 1;
-                    const itemTotal = itemPrice * itemQuantity;
-                    subtotal += itemTotal;
-                    itemDiv.innerHTML = `
-                        <div class="checkout-item-details">
-                            <h3>${item.title}</h3>
-                            <p>${item.price} x ${itemQuantity} = $${itemTotal.toFixed(2)}</p>
-                        </div>
-                    `;
-                    checkoutItemsDiv.appendChild(itemDiv);
-                });
-                const shipping = document.querySelector('input[name="shipping"]:checked').value === "standard" ? 5 : 15;
-                const total = subtotal + shipping - discount;
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("checkout-item");
+            itemDiv.innerHTML = `
+                <div class="checkout-item-details">
+                    <h3>${item.title}</h3>
+                    <p>${item.price} x ${itemQuantity} = $${itemTotal.toFixed(2)}</p>
+                </div>
+            `;
+            checkoutItemsDiv.appendChild(itemDiv);
+        });
 
-                subtotalSpan.innerText = `$${subtotal.toFixed(2)}`;
-                shippingCostSpan.innerText = `$${shipping.toFixed(2)}`;
-                discountSpan.innerText = `$${discount.toFixed(2)}`;
-                totalPriceSpan.innerText = `$${total.toFixed(2)}`;
-            }
-        }
+        const shippingMethod = document.querySelector('input[name="shipping"]:checked').value;
+        const shipping = shippingMethod === "standard" ? 5.00 : 15.00;
+        const total = subtotal + shipping - discount;
 
-        function applyPromo() {
-            const promoCode = document.getElementById("promo-code").value;
-            if (promoCode.toUpperCase() === "SAVE10") {
-                discount = 10;
-                alert("Promo code applied! $10 discount.");
-            } else {
-                discount = 0;
-                alert("Invalid promo code!");
-            }
-            displayCheckout();
-        }
+        itemCountSpan.textContent = cart.length;
+        subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
+        shippingCostSpan.textContent = `$${shipping.toFixed(2)}`;
+        discountSpan.textContent = `$${discount.toFixed(2)}`;
+        totalPriceSpan.textContent = `$${total.toFixed(2)}`;
+    }
+}
 
-        function placeOrder() {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const fullName = document.getElementById("full-name").value;
-            const email = document.getElementById("email").value;
-            const phone = document.getElementById("phone").value;
-            const addressLine1 = document.getElementById("address-line1").value;
-            const addressLine2 = document.getElementById("address-line2").value;
-            const city = document.getElementById("city").value;
-            const state = document.getElementById("state").value;
-            const zip = document.getElementById("zip").value;
-            const country = document.getElementById("country").value;
-            const shippingMethod = document.querySelector('input[name="shipping"]:checked').value;
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+function applyPromo() {
+    const promoCode = document.getElementById("promo-code").value.toUpperCase();
+    if (promoCode === "SAVE10") {
+        discount = 10.00;
+        Swal.fire({
+            icon: "success",
+            title: "Promo Applied!",
+            text: "$10 discount added.",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    } else {
+        discount = 0;
+        Swal.fire({
+            icon: "error",
+            title: "Invalid Code",
+            text: "Please enter a valid promo code.",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+    displayCheckout();
+}
 
-            if (cart.length === 0) {
-                alert("Your cart is empty!");
-                return;
-            }
-            if (!fullName || !email || !phone || !addressLine1 || !city || !state || !zip || !country) {
-                alert("Please fill in all required shipping details!");
-                return;
-            }
-            if (paymentMethod === "card") {
-                const cardNumber = document.getElementById("card-number").value;
-                const cardExpiry = document.getElementById("card-expiry").value;
-                const cardCvv = document.getElementById("card-cvv").value;
-                if (!cardNumber || !cardExpiry || !cardCvv) {
-                    alert("Please fill in all card details!");
-                    return;
-                }
-            }
+function placeOrder() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const fullName = document.getElementById("full-name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const addressLine1 = document.getElementById("address-line1").value.trim();
+    const addressLine2 = document.getElementById("address-line2").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const state = document.getElementById("state").value.trim();
+    const zip = document.getElementById("zip").value.trim();
+    const country = document.getElementById("country").value.trim();
+    const shippingMethod = document.querySelector('input[name="shipping"]:checked').value;
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
 
-            const orderDetails = {
-                cart: cart,
-                shipping: { fullName, email, phone, addressLine1, addressLine2, city, state, zip, country },
-                shippingMethod: shippingMethod,
-                paymentMethod: paymentMethod,
-                total: document.getElementById("total-price").innerText
-            };
-            localStorage.setItem("lastOrder", JSON.stringify(orderDetails));
-            alert("Order placed successfully!");
-            localStorage.removeItem("cart");
-            window.location.href = "home.html";
-        }
+    if (cart.length === 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "Empty Cart",
+            text: "Your cart is empty!",
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
 
-        document.querySelectorAll('input[name="payment"]').forEach(input => {
-            input.addEventListener("change", () => {
-                document.getElementById("card-details").style.display = input.value === "card" ? "block" : "none";
+    if (!fullName || !email || !phone || !addressLine1 || !city || !state || !zip || !country) {
+        Swal.fire({
+            icon: "error",
+            title: "Missing Details",
+            text: "Please fill in all required shipping details!",
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    if (paymentMethod === "card") {
+        const cardNumber = document.getElementById("card-number").value.trim();
+        const cardExpiry = document.getElementById("card-expiry").value.trim();
+        const cardCvv = document.getElementById("card-cvv").value.trim();
+        if (!cardNumber || !cardExpiry || !cardCvv) {
+            Swal.fire({
+                icon: "error",
+                title: "Missing Card Details",
+                text: "Please fill in all card details!",
+                timer: 2000,
+                showConfirmButton: false
             });
-        });
+            return;
+        }
+    }
 
-        document.querySelectorAll('input[name="shipping"]').forEach(input => {
-            input.addEventListener("change", displayCheckout);
-        });
+    const orderDetails = {
+        cart: cart,
+        shipping: { fullName, email, phone, addressLine1, addressLine2, city, state, zip, country },
+        shippingMethod: shippingMethod,
+        paymentMethod: paymentMethod,
+        total: document.getElementById("total-price").innerText
+    };
+    localStorage.setItem("lastOrder", JSON.stringify(orderDetails));
+    Swal.fire({
+        icon: "success",
+        title: "Order Placed!",
+        text: "Thank you for your purchase. Redirecting to home...",
+        timer: 2500,
+        showConfirmButton: false
+    }).then(() => {
+        localStorage.removeItem("cart");
+        window.location.href = "home.html";
+    });
+}
 
-        window.onload = displayCheckout;
+document.querySelectorAll('input[name="payment"]').forEach(input => {
+    input.addEventListener("change", () => {
+        document.getElementById("card-details").style.display = input.value === "card" ? "block" : "none";
+    });
+});
+
+document.querySelectorAll('input[name="shipping"]').forEach(input => {
+    input.addEventListener("change", displayCheckout);
+});
+
+document.addEventListener("DOMContentLoaded", displayCheckout);

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Admin Login</title>
+    <link rel="stylesheet" href="auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo" style="background-image: url('images/amazon_logo.png'); height: 50px; width: 100px; background-size: cover;"></div>
+        <h2>Admin Login</h2>
+        <form id="admin-login-form">
+            <div class="input-group">
+                <label for="admin-email">Email</label>
+                <input type="email" id="admin-email" placeholder="Enter admin email" required>
+            </div>
+            <div class="input-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" placeholder="Enter admin password" required>
+            </div>
+            <button class="btn" type="submit">Login as Admin</button>
+        </form>
+        <div class="login-link">Regular user? <a href="login.html">Login here</a></div>
+    </div>
+    <script type="module" src="auth.js"></script>
+</body>
+</html>
